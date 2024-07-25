@@ -90,8 +90,8 @@ def takePicture():
     bwImage = Image.open(imageName).convert("L").resize((384, 512))
     enhancedImage = Image.fromarray(illuminate(np.reshape(bwImage.getdata(), (bwImage.size[1], bwImage.size[0]))))
     # enhancedImage = custom_bw_enhancement(bwImage)
-    blendedImage = dynamicallyBlendImage(bwImage, enhancedImage, brightness(bwImage))
-    blendedImage.filter(ImageFilter.EDGE_ENHANCE).save(greyName)
+    # blendedImage = dynamicallyBlendImage(bwImage, enhancedImage, brightness(bwImage))
+    enhancedImage.filter(ImageFilter.EDGE_ENHANCE).save(greyName)
 
     return greyName
 
