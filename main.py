@@ -1,17 +1,19 @@
 #!/usr/bin/python
 
 from Adafruit_Thermal import *
-from illumination import *
+# from illumination import *
 import picamera
 from PIL import Image, ImageFilter, ImageStat
 import RPi.GPIO as GPIO # Import Raspberry Pi GPIO library
 import time
+import numpy as np
 from numpy import average
 import json
 import os
 import stat
 from shutil import copytree
 import subprocess
+from illumination_using_wgif import illuminate
 
 shutterButtonPin = 16
 optionButtonPin = 22
@@ -86,8 +88,9 @@ def takePicture():
     Image.open(imageName).rotate(angle, expand=True).save(imageName)
 
     bwImage = Image.open(imageName).convert("L").resize((384, 512))
-    enhancedImage = custom_bw_enhancement(bwImage)
-    blendedImage = dynamicallyBlendImage(bwImage.convert("L"), enhancedImage.convert("L"), brightness(bwImage))
+    enhancedImage = Image.fromarray(illuminate(np.reshape(bwImage.getdata(), (bwImage.size[1], bwImage.size[0]))))
+    # enhancedImage = custom_bw_enhancement(bwImage)
+    blendedImage = dynamicallyBlendImage(bwImage, enhancedImage, brightness(bwImage))
     blendedImage.filter(ImageFilter.EDGE_ENHANCE).save(greyName)
 
     return greyName
